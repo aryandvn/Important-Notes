@@ -17,13 +17,13 @@ pipeline {
         stage('Push changes') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Git_New', 
-                    passwordVariable: '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', usernameVariable: 'aryandvn')]) {
+                    passwordVariable: '**PAT**', usernameVariable: 'aryandvn')]) {
                     sh "touch Text1.txt"
                     sh "git config --global user.email 'aryudhawan2001@gmail.com'"
                     sh "git config --global user.name 'Aryan Dhawan'"
                     sh "git add ."
                     sh "git commit -m 'Commit message'"
-                    sh "git push https://aryandvn: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@github.com/aryandvn/VolumesBackup.git HEAD:master"
+                    sh "git push https://aryandvn:**PAT**@github.com/aryandvn/VolumesBackup.git HEAD:master"
                 }
             }
         }
