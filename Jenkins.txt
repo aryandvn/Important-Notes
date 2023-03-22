@@ -1,19 +1,31 @@
-// This is currently the best way to push a tag (or a branch, etc) from a
-// Pipeline job. It's not ideal - https://issues.jenkins-ci.org/browse/JENKINS-28335
-// is an open JIRA for getting the GitPublisher Jenkins functionality working
-// with Pipeline.
+"""
+To Push data to git hub repository.
+"""
 
-// credentialsId here is the credentials you have set up in Jenkins for pushing
-// to that repository using username and password.
-
-withCredentials([usernamePassword(credentialsId: 'git-pass-credentials-ID', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-    sh("git tag -a some_tag -m 'Jenkins'")
-    sh('git push https://${GIT_USERNAME}:${GIT_PASSWORD}@<REPO> --tags')
-}
-
-// For SSH private key authentication, try the sshagent step from the SSH Agent plugin.
-
-sshagent (credentials: ['git-ssh-credentials-ID']) {
-    sh("git tag -a some_tag -m 'Jenkins'")
-    sh('git push <REPO> --tags')
+pipeline {
+    agent any
+    environment {
+        GIT_REPO_URL = 'https://github.com/aryandvn/VolumesBackup.git'
+        GIT_BRANCH = 'master'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'Git_New', url: 'https://github.com/aryandvn/VolumesBackup.git']])
+            }
+        }
+        stage('Push changes') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'Git_New', 
+                    passwordVariable: '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', usernameVariable: 'aryandvn')]) {
+                    sh "touch Text1.txt"
+                    sh "git config --global user.email 'aryudhawan2001@gmail.com'"
+                    sh "git config --global user.name 'Aryan Dhawan'"
+                    sh "git add ."
+                    sh "git commit -m 'Commit message'"
+                    sh "git push https://aryandvn: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@github.com/aryandvn/VolumesBackup.git HEAD:master"
+                }
+            }
+        }
+    }
 }
